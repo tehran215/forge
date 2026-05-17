@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Build Your System</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23c9a84c'/><text y='24' x='5' font-size='20' font-family='sans-serif' font-weight='900' fill='black'>F</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#060606; --bg2:#0e0e0e; --bg3:#161616; --bg4:#1c1c1c;
+      --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.13);
+      --text:#f0ede8; --text2:#7a7672; --text3:#3a3835;
+      --gold:#c9a84c; --gold2:#f0c060;
+      --green:#3de08a; --red:#e84040; --blue:#4a9eff; --purple:#a374f0; --orange:#ff7040;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:var(--bg); color:var(--text);
+      font-family:'DM Sans',sans-serif;
+      min-height:100vh; overflow-x:hidden;
+    }
+
+    /* PROGRESS BAR */
+    .progress-bar {
+      position:fixed; top:0; left:0; right:0; height:2px;
+      background:var(--bg3); z-index:200;
+    }
+    .progress-fill {
+      height:100%; background:var(--gold);
+      transition:width 0.5s ease;
+    }
+
+    /* TOP NAV */
+    .top-nav {
+      position:fixed; top:2px; left:0; right:0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 32px; z-index:100;
+    }
+    .logo-row { display:flex; align-items:center; gap:10px; }
+    .logo-box {
+      width:32px; height:32px; background:var(--gold);
+      border-radius:8px; display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-weight:800; font-size:14px; color:#000;
+    }
+    .logo-name { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; }
+    .step-counter { font-size:12px; color:var(--text3); font-weight:400; }
+
+    /* MAIN CONTAINER */
+    .onboard-wrap {
+      min-height:100vh;
+      display:flex; align-items:center; justify-content:center;
+      padding:100px 24px 60px;
+    }
+
+    .step {
+      width:100%; max-width:600px;
+      display:none; animation:fadeUp 0.5s ease forwards;
+    }
+    .step.active { display:block; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    .step-eyebrow {
+      font-size:10px; font-weight:500; letter-spacing:1.8px;
+      text-transform:uppercase; color:var(--gold); margin-bottom:14px;
+    }
+    .step-title {
+      font-family:'Syne',sans-serif;
+      font-size:38px; font-weight:800; line-height:1.08;
+      letter-spacing:-1.5px; margin-bottom:12px;
+    }
+    .step-title .dim { color:var(--text3); }
+    .step-sub {
+      font-size:15px; color:var(--text2); line-height:1.75;
+      font-weight:300; margin-bottom:40px; max-width:480px;
+    }
+
+    /* INPUTS */
+    .input-group { margin-bottom:16px; }
+    .input-label { font-size:12px; color:var(--text2); margin-bottom:7px; display:block; font-weight:500; }
+    .forge-input {
+      width:100%; background:var(--bg2);
+      border:1px solid var(--border2); border-radius:11px;
+      padding:14px 18px; font-size:15px;
+      color:var(--text); font-family:'DM Sans',sans-serif;
+      outline:none; transition:border-color 0.15s;
+    }
+    .forge-input:focus { border-color:rgba(201,168,76,0.45); }
+    .forge-input::placeholder { color:var(--text3); }
+
+    /* INTEREST GRID */
+    .interest-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:10px; margin-bottom:32px;
+    }
+    .interest-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:14px; padding:18px 14px;
+      cursor:pointer; transition:all 0.18s;
+      text-align:center; position:relative;
+    }
+    .interest-card:hover { border-color:var(--border2); transform:translateY(-1px); }
+    .interest-card.selected {
+      background:rgba(201,168,76,0.07);
+      border-color:rgba(201,168,76,0.4);
+    }
+    .interest-card.selected::after {
+      content:'✓';
+      position:absolute; top:10px; right:12px;
+      font-size:11px; color:var(--gold); font-weight:700;
+    }
+    .ic-emoji { font-size:26px; margin-bottom:8px; display:block; }
+    .ic-name { font-size:12px; font-weight:500; color:var(--text); }
+    .ic-sub { font-size:10px; color:var(--text3); margin-top:3px; }
+
+    /* GOALS */
+    .goal-list { display:flex; flex-direction:column; gap:10px; margin-bottom:32px; }
+    .goal-item {
+      display:flex; align-items:center; gap:14px;
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:12px; padding:16px 18px;
+      cursor:pointer; transition:all 0.15s;
+    }
+    .goal-item:hover { border-color:var(--border2); }
+    .goal-item.selected {
+      background:rgba(201,168,76,0.06);
+      border-color:rgba(201,168,76,0.35);
+    }
+    .goal-check {
+      width:22px; height:22px; border-radius:50%;
+      border:1.5px solid var(--border2);
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; font-size:11px; transition:all 0.15s;
+    }
+    .goal-item.selected .goal-check {
+      background:var(--gold); border-color:var(--gold); color:#000;
+    }
+    .goal-emoji { font-size:20px; }
+    .goal-text { flex:1; font-size:13px; font-weight:500; }
+    .goal-sub { font-size:11px; color:var(--text3); margin-top:2px; }
+
+    /* IDENTITY PICKER */
+    .identity-grid {
+      display:grid; grid-template-columns:repeat(2,1fr);
+      gap:10px; margin-bottom:32px;
+    }
+    .identity-card {
+      background:var(--bg2); border:1.5px solid var(--border);
+      border-radius:14px; padding:22px 18px;
+      cursor:pointer; transition:all 0.18s;
+      position:relative; overflow:hidden;
+    }
+    .identity-card:hover { transform:translateY(-2px); }
+    .identity-card.selected { border-width:1.5px; }
+    .id-stripe {
+      position:absolute; top:0; left:0; bottom:0;
+      width:3px; border-radius:3px 0 0 3px;
+    }
+    .id-emoji { font-size:28px; margin-bottom:12px; display:block; }
+    .id-name {
+      font-family:'Syne',sans-serif; font-size:15px;
+      font-weight:700; margin-bottom:4px;
+    }
+    .id-desc { font-size:11px; color:var(--text2); line-height:1.6; }
+
+    /* SCHEDULE PICKER */
+    .schedule-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:10px; margin-bottom:32px;
+    }
+    .sched-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:12px; padding:18px 14px; text-align:center;
+      cursor:pointer; transition:all 0.15s;
+    }
+    .sched-card:hover { border-color:var(--border2); }
+    .sched-card.selected {
+      background:rgba(201,168,76,0.07);
+      border-color:rgba(201,168,76,0.4);
+    }
+    .sched-time { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; color:var(--gold); }
+    .sched-label { font-size:11px; color:var(--text2); margin-top:4px; }
+    .sched-sub { font-size:10px; color:var(--text3); margin-top:2px; }
+
+    /* DOMAIN SLIDERS */
+    .domain-sliders { display:flex; flex-direction:column; gap:18px; margin-bottom:32px; }
+    .slider-row { display:flex; align-items:center; gap:14px; }
+    .slider-emoji { font-size:18px; width:28px; text-align:center; }
+    .slider-label { width:80px; font-size:12px; color:var(--text2); }
+    .slider-track {
+      flex:1; height:4px; background:var(--bg3);
+      border-radius:2px; position:relative; cursor:pointer;
+    }
+    .slider-fill { height:100%; border-radius:2px; transition:width 0.1s; }
+    input[type=range] {
+      width:100%; height:4px; background:transparent;
+      appearance:none; outline:none; cursor:pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance:none; width:18px; height:18px;
+      border-radius:50%; background:var(--gold);
+      border:2px solid var(--bg); cursor:pointer;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      height:4px; border-radius:2px;
+      background:linear-gradient(to right, var(--gold) 0%, var(--gold) var(--val, 50%), var(--bg3) var(--val, 50%));
+    }
+    .slider-val { width:28px; text-align:right; font-size:12px; color:var(--text2); font-weight:500; }
+
+    /* FINAL REVEAL */
+    .reveal-card {
+      background:var(--bg2); border:1px solid var(--border);
+      border-radius:18px; padding:32px; margin-bottom:20px;
+    }
+    .reveal-header {
+      display:flex; align-items:center; gap:16px; margin-bottom:24px;
+    }
+    .reveal-avatar {
+      width:56px; height:56px; border-radius:50%;
+      background:linear-gradient(135deg,#c9a84c,#7a5c1a);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-weight:800;
+      font-size:20px; color:#000; border:3px solid rgba(201,168,76,0.3);
+    }
+    .reveal-name { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; }
+    .reveal-tag { font-size:12px; color:var(--gold); margin-top:3px; }
+    .reveal-domains {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:20px;
+    }
+    .rd-item {
+      background:var(--bg3); border-radius:10px; padding:12px 10px;
+      text-align:center;
+    }
+    .rd-emoji { font-size:18px; }
+    .rd-name { font-size:10px; color:var(--text3); margin-top:4px; }
+    .rd-bar { height:2px; background:var(--bg4); border-radius:1px; margin-top:6px; overflow:hidden; }
+    .rd-fill { height:100%; border-radius:1px; }
+
+    /* BUTTONS */
+    .btn-primary {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:15px 32px; background:var(--gold);
+      border-radius:11px; font-size:14px; font-weight:600;
+      color:#000; font-family:'Syne',sans-serif; letter-spacing:0.5px;
+      cursor:pointer; transition:all 0.15s; border:none; width:100%;
+      justify-content:center;
+    }
+    .btn-primary:hover { background:var(--gold2); transform:translateY(-1px); }
+    .btn-ghost {
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px; padding:15px 32px;
+      border:1px solid var(--border2); border-radius:11px;
+      font-size:14px; color:var(--text2);
+      cursor:pointer; transition:all 0.15s; width:100%; margin-top:10px;
+      background:transparent;
+    }
+    .btn-ghost:hover { border-color:rgba(255,255,255,0.25); color:var(--text); }
+
+    .btn-row { display:flex; flex-direction:column; gap:8px; }
+
+    /* HELPER */
+    .helper-text { font-size:11px; color:var(--text3); text-align:center; margin-top:14px; }
+
+    /* STEP 6 ANIMATION */
+    .confetti-row {
+      display:flex; justify-content:center; gap:8px;
+      font-size:28px; margin-bottom:24px;
+      animation:bounce 0.6s ease infinite alternate;
+    }
+    @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-8px)} }
+
+    /* RESPONSIVE */
+    @media (max-width:480px) {
+      .step-title { font-size:28px; }
+      .interest-grid { grid-template-columns:repeat(2,1fr); }
+      .identity-grid { grid-template-columns:1fr; }
+      .schedule-grid { grid-template-columns:repeat(2,1fr); }
+      .reveal-domains { grid-template-columns:repeat(2,1fr); }
+      .top-nav { padding:14px 20px; }
+      .onboard-wrap { padding:80px 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PROGRESS -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:16%"></div></div>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <div class="logo-row">
+    <div class="logo-box">F</div>
+    <span class="logo-name">FORGE</span>
+  </div>
+  <span class="step-counter" id="stepCounter">Step 1 of 6</span>
+</div>
+
+<div class="onboard-wrap">
+  <div style="width:100%;max-width:600px;">
+
+    <!-- STEP 1: WELCOME -->
+    <div class="step active" id="step1">
+      <div class="step-eyebrow">Welcome to FORGE</div>
+      <h1 class="step-title">Who are you<br><span class="dim">becoming?</span></h1>
+      <p class="step-sub">This is your private system. No one else sees this. We're building your command center — start by telling us who you are.</p>
+      <div class="input-group">
+        <label class="input-label">Your name (or alias)</label>
+        <input class="forge-input" type="text" placeholder="e.g. Aryan, AK, ShadowBuilder" id="userName" maxlength="30">
+      </div>
+      <div class="input-group">
+        <label class="input-label">How old are you?</label>
+        <input class="forge-input" type="number" placeholder="e.g. 19" id="userAge" min="13" max="30">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Email (for your account)</label>
+        <input class="forge-input" type="email" placeholder="your@email.com" id="userEmail">
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn-primary" onclick="nextStep()">Continue →</button>
+      </div>
+      <p class="helper-text">Private. Never shared. No spam.</p>
+    </div>
+
+    <!-- STEP 2: INTERESTS -->
+    <div class="step" id="step2">
+      <div class="step-eyebrow">Your World</div>
+      <h1 class="step-title">What are you<br><span class="dim">into?</span></h1>
+      <p class="step-sub">Select everything that's part of your life. FORGE tracks and feeds all of them. Pick at least 3.</p>
+      <div class="interest-grid" id="interestGrid"></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="nextStep()">Continue →</button>
+        <button class="btn-ghost" onclick="prevStep()">← Back</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: IDENTITY -->
+    <div class="step" id="step3">
+      <div class="step-eyebrow">Your Identity</div>
+      <h1 class="step-title">What kind of<br><span class="dim">man</span> are you building?</h1>
+      <p class="step-sub">Pick the identity that feels closest. You're not locked in — FORGE evolves with you.</p>
+      <div class="identity-grid" id="identityGrid"></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="nextStep()">Continue →</button>
+        <button class="btn-ghost" onclick="prevStep()">← Back</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: GOALS -->
+    <div class="step" id="step4">
+      <div class="step-eyebrow">Your Mission</div>
+      <h1 class="step-title">What do you want<br><span class="dim">to fix?</span></h1>
+      <p class="step-sub">Be honest. FORGE works best when it knows your real problems. Select all that apply.</p>
+      <div class="goal-list" id="goalList"></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="nextStep()">Continue →</button>
+        <button class="btn-ghost" onclick="prevStep()">← Back</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: SCHEDULE -->
+    <div class="step" id="step5">
+      <div class="step-eyebrow">Your Rhythm</div>
+      <h1 class="step-title">When do you<br><span class="dim">do the work?</span></h1>
+      <p class="step-sub">FORGE sends your daily mission reminder at the right time. When do you start your day?</p>
+      <div class="schedule-grid" id="schedGrid"></div>
+      <div style="margin-bottom:28px;">
+        <div class="step-eyebrow" style="margin-bottom:16px;">Rate yourself in each domain (honest)</div>
+        <div class="domain-sliders" id="domainSliders"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="nextStep()">Build My System →</button>
+        <button class="btn-ghost" onclick="prevStep()">← Back</button>
+      </div>
+    </div>
+
+    <!-- STEP 6: REVEAL -->
+    <div class="step" id="step6">
+      <div class="confetti-row">🔥⚡🎯</div>
+      <div class="step-eyebrow">Your System Is Ready</div>
+      <h1 class="step-title">Welcome to<br><span style="color:var(--gold);">FORGE</span></h1>
+      <p class="step-sub">Your command center is built. Here's what we've set up for you.</p>
+      <div class="reveal-card" id="revealCard"></div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="window.location.href='dashboard.html'">Enter Command Center →</button>
+      </div>
+      <p class="helper-text">Your progress saves automatically. Welcome to the movement.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const interests = [
+  { emoji:'💪', name:'Fitness & Gym', sub:'Workouts, gains, discipline' },
+  { emoji:'👔', name:'Fashion & Style', sub:'Outfits, aesthetics, identity' },
+  { emoji:'🏏', name:'Cricket & Sports', sub:'Matches, mentality, stats' },
+  { emoji:'📸', name:'Photography', sub:'Composition, light, craft' },
+  { emoji:'🎬', name:'Content Creation', sub:'Videos, reels, building an audience' },
+  { emoji:'💰', name:'Earning Money', sub:'Freelance, side income, business' },
+  { emoji:'⚡', name:'Productivity', sub:'Systems, focus, time mastery' },
+  { emoji:'🧠', name:'Mindset & Intelligence', sub:'Deep thinking, reading, ideas' },
+  { emoji:'🔥', name:'Discipline', sub:'Habits, routines, consistency' },
+  { emoji:'🌍', name:'Politics & Thinking', sub:'World view, critical thought' },
+  { emoji:'🎭', name:'Movies & Web Series', sub:'Cinema, analysis, storytelling' },
+  { emoji:'📈', name:'Self Growth', sub:'Personal development, growth' },
+];
+
+const identities = [
+  { emoji:'🏋️', name:'The Athlete', desc:'Built on discipline and physical excellence. You live by the gym.', color:'#3de08a' },
+  { emoji:'🎨', name:'The Creator', desc:'You make things. Content, photos, videos — you express yourself.', color:'#a374f0' },
+  { emoji:'📖', name:'The Intellectual', desc:'Reading, thinking, debating ideas. Your mind is your weapon.', color:'#4a9eff' },
+  { emoji:'💼', name:'The Entrepreneur', desc:'Building something. Money, freedom, your own rules.', color:'#c9a84c' },
+  { emoji:'🌐', name:'The Thinker', desc:'Politics, philosophy, understanding the world at a deeper level.', color:'#ff7040' },
+  { emoji:'⚡', name:'The Operator', desc:'Systems, productivity, mastery. You want to be quietly elite.', color:'#e84040' },
+];
+
+const goals = [
+  { emoji:'🔄', text:'Build consistency', sub:'Stop starting and stopping things' },
+  { emoji:'📵', text:'Reduce screen time', sub:'Stop wasting hours on mindless content' },
+  { emoji:'💪', text:'Get serious about fitness', sub:'Actually stick to a gym routine' },
+  { emoji:'💰', text:'Start earning money', sub:'Build income outside of school' },
+  { emoji:'📖', text:'Read and learn more', sub:'Build knowledge and real intelligence' },
+  { emoji:'😴', text:'Fix my sleep schedule', sub:'Wake up early and feel in control' },
+  { emoji:'🎯', text:'Build a clear identity', sub:'Know who I am and where I\'m going' },
+  { emoji:'🧘', text:'Improve mental clarity', sub:'Less anxiety, more focus and calm' },
+];
+
+const schedules = [
+  { time:'5–7 AM', label:'Early Riser', sub:'The elite hour' },
+  { time:'7–9 AM', label:'Morning Man', sub:'Classic start' },
+  { time:'9–11 AM', label:'Mid-Morning', sub:'After breakfast' },
+  { time:'12–2 PM', label:'Afternoon', sub:'Late starter' },
+  { time:'6–9 PM', label:'Evening', sub:'After college/school' },
+  { time:'10 PM+', label:'Night Owl', sub:'When the world sleeps' },
+];
+
+const domainDefs = [
+  { emoji:'🧠', name:'Mind', color:'#4a9eff' },
+  { emoji:'💪', name:'Body', color:'#3de08a' },
+  { emoji:'💰', name:'Money', color:'#c9a84c' },
+  { emoji:'⚡', name:'Skills', color:'#a374f0' },
+  { emoji:'👔', name:'Style', color:'#ff7040' },
+  { emoji:'🔥', name:'Discipline', color:'#e84040' },
+];
+
+const state = {
+  step: 1,
+  totalSteps: 6,
+  name: '', age: '', email: '',
+  interests: new Set(),
+  identity: null,
+  goals: new Set(),
+  schedule: null,
+  domains: { Mind:50, Body:50, Money:30, Skills:50, Style:50, Discipline:40 },
+};
+
+// Render interest grid
+const ig = document.getElementById('interestGrid');
+interests.forEach((int, i) => {
+  const el = document.createElement('div');
+  el.className = 'interest-card';
+  el.innerHTML = `<span class="ic-emoji">${int.emoji}</span><div class="ic-name">${int.name}</div><div class="ic-sub">${int.sub}</div>`;
+  el.addEventListener('click', () => {
+    if (state.interests.has(i)) { state.interests.delete(i); el.classList.remove('selected'); }
+    else { state.interests.add(i); el.classList.add('selected'); }
+  });
+  ig.appendChild(el);
+});
+
+// Render identity grid
+const idg = document.getElementById('identityGrid');
+identities.forEach((id, i) => {
+  const el = document.createElement('div');
+  el.className = 'identity-card';
+  el.innerHTML = `<div class="id-stripe" style="background:${id.color}"></div><span class="id-emoji">${id.emoji}</span><div class="id-name" style="color:${id.color}">${id.name}</div><div class="id-desc">${id.desc}</div>`;
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.identity-card').forEach(c => { c.classList.remove('selected'); c.style.borderColor=''; });
+    el.classList.add('selected');
+    el.style.borderColor = id.color + '55';
+    state.identity = i;
+  });
+  idg.appendChild(el);
+});
+
+// Render goals
+const gl = document.getElementById('goalList');
+goals.forEach((g, i) => {
+  const el = document.createElement('div');
+  el.className = 'goal-item';
+  el.innerHTML = `<div class="goal-check"></div><span class="goal-emoji">${g.emoji}</span><div><div class="goal-text">${g.text}</div><div class="goal-sub">${g.sub}</div></div>`;
+  el.addEventListener('click', () => {
+    if (state.goals.has(i)) { state.goals.delete(i); el.classList.remove('selected'); el.querySelector('.goal-check').textContent=''; }
+    else { state.goals.add(i); el.classList.add('selected'); el.querySelector('.goal-check').textContent='✓'; }
+  });
+  gl.appendChild(el);
+});
+
+// Render schedule
+const sg = document.getElementById('schedGrid');
+schedules.forEach((s, i) => {
+  const el = document.createElement('div');
+  el.className = 'sched-card';
+  el.innerHTML = `<div class="sched-time">${s.time}</div><div class="sched-label">${s.label}</div><div class="sched-sub">${s.sub}</div>`;
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.sched-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    state.schedule = i;
+  });
+  sg.appendChild(el);
+});
+
+// Render domain sliders
+const ds = document.getElementById('domainSliders');
+domainDefs.forEach(d => {
+  const el = document.createElement('div');
+  el.className = 'slider-row';
+  el.innerHTML = `
+    <span class="slider-emoji">${d.emoji}</span>
+    <span class="slider-label">${d.name}</span>
+    <input type="range" min="0" max="100" value="${state.domains[d.name]}" step="1"
+      style="flex:1;accent-color:${d.color};"
+      oninput="state.domains['${d.name}']=this.value;this.nextElementSibling.textContent=this.value">
+    <span class="slider-val">${state.domains[d.name]}</span>`;
+  ds.appendChild(el);
+});
+
+function buildReveal() {
+  const name = state.name || document.getElementById('userName').value || 'Builder';
+  const initials = name.slice(0,2).toUpperCase();
+  const identity = state.identity !== null ? identities[state.identity].name : 'The Operator';
+  const domainCards = domainDefs.map(d => `
+    <div class="rd-item">
+      <div class="rd-emoji">${d.emoji}</div>
+      <div class="rd-name">${d.name}</div>
+      <div class="rd-bar"><div class="rd-fill" style="width:${state.domains[d.name]}%;background:${d.color};"></div></div>
+    </div>`).join('');
+  const selectedInterests = [...state.interests].slice(0,4).map(i => interests[i].emoji).join(' ');
+
+  document.getElementById('revealCard').innerHTML = `
+    <div class="reveal-header">
+      <div class="reveal-avatar">${initials}</div>
+      <div>
+        <div class="reveal-name">${name}</div>
+        <div class="reveal-tag">${identity} · Level 1 · Beginner</div>
+      </div>
+      <div style="margin-left:auto;text-align:right;">
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--gold);">0</div>
+        <div style="font-size:11px;color:var(--text3);">Life Score</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text3);background:var(--bg3);padding:5px 12px;border-radius:20px;">
+        🔥 Streak starts today
+      </div>
+      <div style="font-size:11px;color:var(--gold);background:rgba(201,168,76,0.08);padding:5px 12px;border-radius:20px;border:1px solid rgba(201,168,76,0.2);">
+        ⚡ 0 / 5,000 XP
+      </div>
+      ${selectedInterests ? `<div style="font-size:11px;color:var(--text3);background:var(--bg3);padding:5px 12px;border-radius:20px;">${selectedInterests} Interests tracked</div>` : ''}
+    </div>
+    <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Starting Domain Scores</div>
+    <div class="reveal-domains">${domainCards}</div>`;
+
+  // Save to localStorage
+  const profile = {
+    name, age: document.getElementById('userAge').value,
+    email: document.getElementById('userEmail').value,
+    identity: state.identity !== null ? identities[state.identity].name : null,
+    interests: [...state.interests].map(i => interests[i].name),
+    goals: [...state.goals].map(i => goals[i].text),
+    domains: state.domains,
+    schedule: state.schedule !== null ? schedules[state.schedule].time : null,
+    level: 1, xp: 0, streak: 0,
+    createdAt: new Date().toISOString(),
+  };
+  localStorage.setItem('forge_profile', JSON.stringify(profile));
+}
+
+function nextStep() {
+  if (state.step === 1) {
+    const name = document.getElementById('userName').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    if (!name) { document.getElementById('userName').focus(); return; }
+    if (!email || !email.includes('@')) { document.getElementById('userEmail').focus(); return; }
+    state.name = name;
+  }
+  if (state.step === 6) return;
+  document.getElementById('step' + state.step).classList.remove('active');
+  state.step++;
+  document.getElementById('step' + state.step).classList.add('active');
+  updateProgress();
+  if (state.step === 6) buildReveal();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep() {
+  if (state.step === 1) return;
+  document.getElementById('step' + state.step).classList.remove('active');
+  state.step--;
+  document.getElementById('step' + state.step).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = (state.step / state.totalSteps) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepCounter').textContent = `Step ${state.step} of ${state.totalSteps}`;
+}
+</script>
+</body>
+</html>

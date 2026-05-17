@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Command Center</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23c9a84c'/><text y='24' x='5' font-size='20' font-family='sans-serif' font-weight='900' fill='black'>F</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+<div class="dash-layout">
+  <nav class="sidebar">
+    <a href="index.html" class="logo-box" style="margin-bottom:20px;text-decoration:none;">F</a>
+    <div class="nav-icon active" data-page="dashboard" title="Dashboard">📊</div>
+    <div class="nav-icon" data-page="missions" title="Daily Missions">⚡</div>
+    <div class="nav-icon" data-page="lifemap" title="Life Map">🗺️</div>
+    <div class="nav-icon" data-page="analytics" title="Analytics">📈</div>
+    <div class="nav-icon" data-page="feed" title="Smart Feed">📡</div>
+    <div class="nav-icon" data-page="community" title="Community">👥</div>
+    <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div class="nav-icon" title="Settings">⚙️</div>
+      <div class="dash-avatar">AK</div>
+    </div>
+  </nav>
+
+  <main class="dash-main">
+    <!-- TOP BAR -->
+    <div class="dash-topbar">
+      <div>
+        <h1 class="dash-page-title" id="pageTitle">Command Center</h1>
+        <p class="dash-page-sub" id="pageSub">Friday, May 16 · Week 20 of 2026</p>
+      </div>
+      <div class="dash-topbar-right">
+        <div class="streak-badge">🔥 23-day streak</div>
+        <div class="notif-btn">🔔</div>
+      </div>
+    </div>
+
+    <!-- XP BAR -->
+    <div class="xp-row">
+      <div class="level-badge">12</div>
+      <span class="xp-label">Level 12 · Disciplined</span>
+      <div class="xp-track"><div class="xp-fill" style="width:68%"></div></div>
+      <span class="xp-count">3,420 / 5,000 XP</span>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div id="pageContent"></div>
+  </main>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mn-item active" data-page="dashboard">
+    <span class="mn-icon">📊</span>
+    <span class="mn-label">Home</span>
+  </div>
+  <div class="mn-item" data-page="missions">
+    <span class="mn-icon">⚡</span>
+    <span class="mn-label">Missions</span>
+  </div>
+  <div class="mn-item" data-page="lifemap">
+    <span class="mn-icon">🗺️</span>
+    <span class="mn-label">Life Map</span>
+  </div>
+  <div class="mn-item" data-page="analytics">
+    <span class="mn-icon">📈</span>
+    <span class="mn-label">Analytics</span>
+  </div>
+  <div class="mn-item" data-page="community">
+    <span class="mn-icon">👥</span>
+    <span class="mn-label">Circle</span>
+  </div>
+</nav>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+/* ============================================
+   FORGE · Mobile CSS
+   css/mobile.css — loaded on all pages
+   Handles everything ≤768px
+   ============================================ */
+
+/* MOBILE NAV BAR (bottom) */
+@media (max-width: 768px) {
+
+  /* Hide desktop sidebar */
+  .sidebar { display: none !important; }
+
+  /* Dashboard fills full width */
+  .dash-layout {
+    grid-template-columns: 1fr !important;
+    padding-bottom: 72px; /* space for bottom nav */
+  }
+
+  .dash-main { padding: 16px 16px 20px; }
+
+  /* Bottom navigation bar */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(10,10,10,0.96);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 10px 0 env(safe-area-inset-bottom, 10px);
+    z-index: 200;
+  }
+
+  .mn-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer; padding: 4px 0;
+    transition: all 0.15s;
+  }
+
+  .mn-icon { font-size: 20px; line-height: 1; }
+  .mn-label { font-size: 10px; color: var(--text3); font-weight: 400; }
+  .mn-item.active .mn-label { color: var(--gold); }
+  .mn-item.active .mn-icon { filter: drop-shadow(0 0 4px rgba(201,168,76,0.5)); }
+
+  /* ---------------------------------------- */
+  /* LANDING PAGE MOBILE */
+  /* ---------------------------------------- */
+
+  .navbar { padding: 14px 20px; }
+  .nav-links { display: none; }
+  .navbar .btn-primary { padding: 8px 16px; font-size: 12px; }
+
+  .hero { padding: 70px 20px 44px; }
+  .hero h1 { font-size: 38px; letter-spacing: -1.5px; }
+  .hero-sub { font-size: 14px; }
+  .hero-actions { flex-direction: column; gap: 10px; }
+  .hero-actions .btn-primary,
+  .hero-actions .btn-ghost { width: 100%; justify-content: center; }
+
+  .stats-row {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 16px;
+  }
+  .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+  .stat-num { font-size: 22px; }
+
+  .manifesto-section { padding: 40px 20px; }
+  .mf-box { padding: 24px 20px; }
+  .mf-quote { font-size: 17px; line-height: 1.6; }
+
+  .problems-section,
+  .features-section,
+  .interests-section,
+  .waitlist-section { padding-left: 20px; padding-right: 20px; }
+
+  .prob-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .section-title { font-size: 26px; }
+  .section-sub { font-size: 13px; }
+
+  .waitlist-form { flex-direction: column; }
+  .email-input, .waitlist-form .btn-primary { width: 100%; }
+
+  footer {
+    flex-direction: column; gap: 10px;
+    text-align: center; padding: 24px 20px;
+  }
+
+  /* ---------------------------------------- */
+  /* DASHBOARD MOBILE */
+  /* ---------------------------------------- */
+
+  .dash-topbar { margin-bottom: 16px; }
+  .dash-page-title { font-size: 18px; }
+  .streak-badge { padding: 5px 10px; font-size: 11px; }
+
+  .xp-row { padding: 12px 14px; gap: 8px; }
+  .xp-label { display: none; }
+  .xp-count { font-size: 11px; }
+
+  /* Life score row — stack vertically */
+  .life-score-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Quick stats — 2 col on mobile */
+  .quick-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px;
+  }
+  .stat-card { padding: 14px; }
+  .stat-card-value { font-size: 18px; }
+
+  /* Grid-2 → single col */
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .grid-3 { grid-template-columns: 1fr 1fr !important; }
+  .grid-4 { grid-template-columns: 1fr 1fr !important; }
+
+  /* Life areas — 2 col */
+  .life-areas {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px;
+  }
+  .area-card { padding: 14px; }
+  .area-icon { font-size: 18px; margin-bottom: 6px; }
+  .area-name { font-size: 11px; }
+
+  /* Cards */
+  .card { padding: 16px; border-radius: 14px; }
+  .card-title { font-size: 13px; }
+
+  /* Mission items */
+  .mission-item { padding: 10px 12px; }
+  .mission-name { font-size: 11px; }
+
+  /* Heatmap — fewer columns */
+  .heatmap-grid {
+    grid-template-columns: repeat(10, 1fr) !important;
+  }
+
+  /* Life map detail panel — full width below domains */
+  .lifemap-split {
+    grid-template-columns: 1fr !important;
+    flex-direction: column;
+  }
+
+  /* Analytics bars */
+  .analytics-bar-row { flex-direction: column; gap: 8px; }
+
+  /* Community input */
+  .community-input-row { flex-direction: column; }
+
+  /* ---------------------------------------- */
+  /* ONBOARDING MOBILE */
+  /* ---------------------------------------- */
+
+  .top-nav { padding: 14px 20px; }
+  .onboard-wrap { padding: 72px 16px 32px; }
+
+  .step-title { font-size: 28px; letter-spacing: -1px; }
+  .step-sub { font-size: 13px; margin-bottom: 28px; }
+
+  /* Interest grid — 2 col */
+  .interest-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px;
+  }
+  .interest-card { padding: 14px 10px; }
+  .ic-emoji { font-size: 22px; }
+  .ic-name { font-size: 11px; }
+  .ic-sub { display: none; }
+
+  /* Identity — 1 col */
+  .identity-grid { grid-template-columns: 1fr !important; }
+
+  /* Schedule — 2 col */
+  .schedule-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Reveal domains */
+  .reveal-domains { grid-template-columns: repeat(2, 1fr) !important; }
+
+  .btn-primary { font-size: 14px; padding: 14px 24px; }
+  .btn-ghost { font-size: 14px; padding: 12px 24px; }
+}
+
+/* ---------------------------------------- */
+/* SMALL PHONES (< 380px) */
+/* ---------------------------------------- */
+
+@media (max-width: 380px) {
+  .hero h1 { font-size: 30px; }
+  .interest-grid { grid-template-columns: 1fr !important; }
+  .quick-stats { grid-template-columns: 1fr !important; }
+  .life-areas { grid-template-columns: 1fr !important; }
+}
+
+/* ---------------------------------------- */
+/* DESKTOP — hide mobile nav */
+/* ---------------------------------------- */
+
+@media (min-width: 769px) {
+  .mobile-nav { display: none !important; }
+}
+
+/* ---------------------------------------- */
+/* TOUCH IMPROVEMENTS */
+/* ---------------------------------------- */
+
+@media (hover: none) {
+  .feat-card:hover,
+  .area-card:hover,
+  .stat-card:hover,
+  .mission-item:hover,
+  .interest-card:hover,
+  .domain-card:hover {
+    transform: none;
+  }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-ghost:active { transform: scale(0.97); }
+}
+
+/* ---------------------------------------- */
+/* SAFE AREAS (iPhone notch etc) */
+/* ---------------------------------------- */
+
+.mobile-nav {
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+.dash-main {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
