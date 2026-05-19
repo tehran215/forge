@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#060606; --gold:#c9a84c; --gold2:#f0c060;
+      --text:#f0ede8; --text2:#7a7672; --text3:#3a3835;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Cinematic background glow */
+    .bg-glow {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      animation: breathe 4s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%,100% { transform: translate(-50%,-50%) scale(1);   opacity:0.6; }
+      50%      { transform: translate(-50%,-50%) scale(1.15); opacity:1;   }
+    }
+
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index:0; opacity:0.4;
+    }
+
+    .center {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 520px;
+      width: 100%;
+    }
+
+    /* Logo */
+    .logo-box {
+      width: 52px; height: 52px;
+      background: var(--gold);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 22px; color: #000;
+      margin: 0 auto 48px;
+      opacity: 0;
+      animation: fadeDown 0.6s ease 0.2s forwards;
+    }
+
+    /* Welcome line */
+    .welcome-line {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.5s forwards;
+    }
+
+    /* Main name */
+    .name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(38px, 8vw, 64px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      color: var(--text);
+      margin-bottom: 6px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.7s forwards;
+    }
+
+    .name .gold { color: var(--gold); }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 16px;
+      color: var(--text2);
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.9s forwards;
+    }
+
+    /* Divider */
+    .divider {
+      width: 48px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 56px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 1.1s forwards;
+    }
+
+    /* Tagline */
+    .tagline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(22px, 5vw, 32px);
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.3s forwards;
+    }
+
+    .tagline .dim { color: var(--text3); }
+
+    .tagline-sub {
+      font-size: 14px;
+      color: var(--text2);
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 360px;
+      margin: 0 auto 56px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.5s forwards;
+    }
+
+    /* Enter button */
+    .enter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 40px;
+      background: var(--gold);
+      border-radius: 12px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #000;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.7s forwards;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .enter-btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .enter-btn:hover {
+      background: var(--gold2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(201,168,76,0.25);
+    }
+    .enter-btn:hover::before { opacity: 1; }
+
+    .enter-btn:active { transform: translateY(0); }
+
+    .arrow {
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+    .enter-btn:hover .arrow { transform: translateX(4px); }
+
+    /* Skip link */
+    .skip {
+      display: block;
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text3);
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 2s forwards;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .skip:hover { color: var(--text2); }
+
+    /* Scroll indicator (desktop) */
+    .built-by {
+      position: fixed;
+      bottom: 28px; left: 0; right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 1px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 2.2s forwards;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 480px) {
+      .logo-box { width:44px; height:44px; font-size:18px; margin-bottom:36px; }
+      .name { letter-spacing:-1px; }
+      .enter-btn { width:100%; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow"></div>
+
+  <div class="center">
+    <div class="logo-box">F</div>
+
+    <div class="welcome-line">Welcome to FORGE</div>
+
+    <div class="name">
+      Tehran<br><span class="gold">Bhat</span>
+    </div>
+
+    <div class="subtitle">invites you in.</div>
+
+    <div class="divider"></div>
+
+    <div class="tagline">
+      Stop drifting.<br>
+      <span class="dim">Start building</span> yourself.
+    </div>
+
+    <div class="tagline-sub">
+      A private system for ambitious young men who are done being scattered
+      and ready to build something real — starting with themselves.
+    </div>
+
+    <a href="index.html" class="enter-btn">
+      Enter FORGE
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="dashboard.html" class="skip">
+      Go straight to dashboard →
+    </a>
+  </div>
+
+  <div class="built-by">FORGE · tehran215.github.io/forge</div>
+
+  <script>
+    // Auto-redirect after 8 seconds if user doesn't click
+    // (so people who share the link directly still get in)
+    // Remove this if you want the welcome page to stay forever
+    setTimeout(function() {
+      var btn = document.querySelector('.enter-btn');
+      if (btn) btn.style.animation = 'none';
+      // Uncomment the line below to auto-redirect:
+      // window.location.href = 'index.html';
+    }, 8000);
+  </script>
+
+</body>
+</html>
