@@ -9,74 +9,114 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    .loading-screen{position:fixed;inset:0;background:#060606;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:16px;transition:opacity 0.5s;}
+    .loading-screen.hidden{opacity:0;pointer-events:none;}
+    .loading-logo{width:48px;height:48px;background:#c9a84c;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#000;animation:pulse2 1.5s ease-in-out infinite;}
+    @keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .loading-text{font-size:12px;color:#3a3835;letter-spacing:2px;text-transform:uppercase;}
+    .user-menu{position:relative;}
+    .user-menu-dropdown{position:absolute;bottom:48px;left:0;background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:6px;min-width:180px;display:none;z-index:999;}
+    .user-menu:hover .user-menu-dropdown{display:block;}
+    .umd-item{padding:9px 14px;border-radius:8px;font-size:12px;color:#7a7672;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:8px;}
+    .umd-item:hover{background:#161616;color:#f0ede8;}
+    .umd-name{font-size:11px;color:#3a3835;padding:9px 14px 4px;font-weight:500;text-transform:uppercase;letter-spacing:1px;}
+    .checkin-bar{background:#0e0e0e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .checkin-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:80px;}
+    .checkin-label{font-size:10px;color:#3a3835;text-transform:uppercase;letter-spacing:1px;}
+    .checkin-input{background:#161616;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 10px;font-size:13px;color:#f0ede8;font-family:'DM Sans',sans-serif;outline:none;width:100%;}
+    .checkin-input:focus{border-color:rgba(201,168,76,0.4);}
+    .checkin-save{padding:9px 18px;background:#c9a84c;border-radius:8px;font-size:12px;font-weight:600;color:#000;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;border:none;transition:background 0.15s;}
+    .checkin-save:hover{background:#f0c060;}
+    .add-mission-form{background:#0e0e0e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;margin-bottom:12px;display:none;}
+    .add-mission-form.open{display:block;}
+    .add-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .add-input{flex:1;min-width:120px;background:#161616;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 12px;font-size:13px;color:#f0ede8;font-family:'DM Sans',sans-serif;outline:none;}
+    .add-input:focus{border-color:rgba(201,168,76,0.4);}
+    .add-select{background:#161616;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:9px 12px;font-size:13px;color:#f0ede8;font-family:'DM Sans',sans-serif;outline:none;}
+    .add-btn{padding:9px 18px;background:#c9a84c;border-radius:8px;font-size:12px;font-weight:600;color:#000;cursor:pointer;border:none;font-family:'Syne',sans-serif;}
+    .domain-slider-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+    .domain-slider-row input[type=range]{flex:1;accent-color:#c9a84c;height:4px;cursor:pointer;}
+    .earning-form{background:#0e0e0e;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;margin-bottom:16px;}
+    .empty-state{text-align:center;padding:40px 20px;color:#3a3835;font-size:13px;line-height:1.8;}
+    .empty-state span{font-size:28px;display:block;margin-bottom:12px;}
+    .delete-btn{font-size:12px;color:#3a3835;cursor:pointer;padding:2px 6px;border-radius:4px;transition:color 0.15s;}
+    .delete-btn:hover{color:#e84040;}
+    .post-anon-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:#3a3835;cursor:pointer;margin-top:10px;}
+    .toggle-box{width:32px;height:18px;background:#161616;border-radius:9px;position:relative;cursor:pointer;border:1px solid rgba(255,255,255,0.1);transition:background 0.2s;}
+    .toggle-box.on{background:#c9a84c;}
+    .toggle-ball{position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:left 0.2s;}
+    .toggle-box.on .toggle-ball{left:16px;}
+  </style>
 </head>
 <body>
 
+<!-- LOADING -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">F</div>
+  <div class="loading-text">Loading your world...</div>
+</div>
+
 <div class="dash-layout">
+  <!-- SIDEBAR -->
   <nav class="sidebar">
-    <a href="index.html" class="logo-box" style="margin-bottom:20px;text-decoration:none;">F</a>
+    <a href="index.html" style="text-decoration:none;">
+      <div class="logo-box" style="margin-bottom:20px;">F</div>
+    </a>
     <div class="nav-icon active" data-page="dashboard" title="Dashboard">📊</div>
-    <div class="nav-icon" data-page="missions" title="Daily Missions">⚡</div>
-    <div class="nav-icon" data-page="lifemap" title="Life Map">🗺️</div>
+    <div class="nav-icon" data-page="missions"  title="Daily Missions">⚡</div>
+    <div class="nav-icon" data-page="lifemap"   title="Life Map">🗺️</div>
     <div class="nav-icon" data-page="analytics" title="Analytics">📈</div>
-    <div class="nav-icon" data-page="feed" title="Smart Feed">📡</div>
+    <div class="nav-icon" data-page="earnings"  title="Earnings">💰</div>
     <div class="nav-icon" data-page="community" title="Community">👥</div>
     <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;">
-      <div class="nav-icon" title="Settings">⚙️</div>
-      <div class="dash-avatar">AK</div>
+      <div class="nav-icon" data-page="settings" title="Settings">⚙️</div>
+      <div class="user-menu">
+        <div class="dash-avatar" id="userAvatar" title="Account">AK</div>
+        <div class="user-menu-dropdown">
+          <div class="umd-name" id="dropdownName">Loading...</div>
+          <div class="umd-item" onclick="renderPage('settings')">⚙️ Settings</div>
+          <div class="umd-item" onclick="FORGE_DB.Auth.signOut()">🚪 Sign Out</div>
+        </div>
+      </div>
     </div>
   </nav>
 
+  <!-- MAIN -->
   <main class="dash-main">
-    <!-- TOP BAR -->
     <div class="dash-topbar">
       <div>
         <h1 class="dash-page-title" id="pageTitle">Command Center</h1>
-        <p class="dash-page-sub" id="pageSub">Friday, May 16 · Week 20 of 2026</p>
+        <p class="dash-page-sub" id="pageSub">Loading...</p>
       </div>
       <div class="dash-topbar-right">
-        <div class="streak-badge">🔥 23-day streak</div>
+        <div class="streak-badge" id="streakBadge">🔥 0-day streak</div>
         <div class="notif-btn">🔔</div>
       </div>
     </div>
 
-    <!-- XP BAR -->
     <div class="xp-row">
-      <div class="level-badge">12</div>
-      <span class="xp-label">Level 12 · Disciplined</span>
-      <div class="xp-track"><div class="xp-fill" style="width:68%"></div></div>
-      <span class="xp-count">3,420 / 5,000 XP</span>
+      <div class="level-badge" id="levelBadge">1</div>
+      <span class="xp-label" id="xpLabel">Level 1 · Beginner</span>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <span class="xp-count" id="xpCount">0 / 500 XP</span>
     </div>
 
-    <!-- PAGE CONTENT -->
-    <div id="pageContent"></div>
+    <div id="pageContent"><div class="empty-state"><span>⏳</span>Loading your data...</div></div>
   </main>
 </div>
 
-<!-- MOBILE BOTTOM NAV -->
-<nav class="mobile-nav" id="mobileNav">
-  <div class="mn-item active" data-page="dashboard">
-    <span class="mn-icon">📊</span>
-    <span class="mn-label">Home</span>
-  </div>
-  <div class="mn-item" data-page="missions">
-    <span class="mn-icon">⚡</span>
-    <span class="mn-label">Missions</span>
-  </div>
-  <div class="mn-item" data-page="lifemap">
-    <span class="mn-icon">🗺️</span>
-    <span class="mn-label">Life Map</span>
-  </div>
-  <div class="mn-item" data-page="analytics">
-    <span class="mn-icon">📈</span>
-    <span class="mn-label">Analytics</span>
-  </div>
-  <div class="mn-item" data-page="community">
-    <span class="mn-icon">👥</span>
-    <span class="mn-label">Circle</span>
-  </div>
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <div class="mn-item active" data-page="dashboard"><span class="mn-icon">📊</span><span class="mn-label">Home</span></div>
+  <div class="mn-item" data-page="missions"><span class="mn-icon">⚡</span><span class="mn-label">Missions</span></div>
+  <div class="mn-item" data-page="lifemap"><span class="mn-icon">🗺️</span><span class="mn-label">Life Map</span></div>
+  <div class="mn-item" data-page="earnings"><span class="mn-icon">💰</span><span class="mn-label">Earnings</span></div>
+  <div class="mn-item" data-page="community"><span class="mn-icon">👥</span><span class="mn-label">Circle</span></div>
 </nav>
 
-<script src="js/dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

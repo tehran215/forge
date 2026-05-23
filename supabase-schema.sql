@@ -296,3 +296,18 @@ INSERT INTO feed_content (title, body, emoji, category, read_time, is_published)
   ('Your First ₹10K Online', 'The realistic roadmap for students who want to start earning real money.', '💰', 'money', 10, TRUE),
   ('Photography as a Discipline Practice', 'Why picking up a camera daily builds focus better than meditation apps.', '📸', 'creativity', 5, TRUE),
   ('What Cricket Teaches About Pressure', 'The mental game of the crease — and how it applies to real life.', '🏏', 'mindset', 7, TRUE);
+
+-- ============================================
+-- ADDITIONAL: needed by app.js
+-- ============================================
+
+-- Add total_earned column to profiles
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS total_earned NUMERIC(12,2) DEFAULT 0;
+
+-- RPC function for incrementing post likes safely
+CREATE OR REPLACE FUNCTION increment_likes(post_id UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE posts SET likes_count = likes_count + 1 WHERE id = post_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

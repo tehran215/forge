@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#060606;--bg2:#0e0e0e;--bg3:#161616;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0ede8;--text2:#7a7672;--text3:#3a3835;--gold:#c9a84c;--gold2:#f0c060;--green:#3de08a;--red:#e84040;}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .glow{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%);pointer-events:none;}
+    .box{width:100%;max-width:400px;position:relative;z-index:1;}
+    .logo-row{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:40px;}
+    .logo-box{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#000;}
+    .logo-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;}
+    .tabs{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:28px;}
+    .tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;border-radius:9px;color:var(--text3);transition:all 0.15s;}
+    .tab.active{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+    .form-section{display:none;}
+    .form-section.active{display:block;}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+    .field input{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.15s;}
+    .field input:focus{border-color:rgba(201,168,76,0.5);}
+    .field input::placeholder{color:var(--text3);}
+    .btn{width:100%;padding:14px;background:var(--gold);border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#000;cursor:pointer;transition:all 0.15s;margin-top:6px;}
+    .btn:hover{background:var(--gold2);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;}
+    .msg{margin-top:14px;padding:12px 14px;border-radius:9px;font-size:12px;display:none;line-height:1.6;}
+    .msg.error{background:rgba(232,64,64,0.08);border:1px solid rgba(232,64,64,0.2);color:var(--red);display:block;}
+    .msg.success{background:rgba(61,224,138,0.08);border:1px solid rgba(61,224,138,0.2);color:var(--green);display:block;}
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:11px;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+    .back-link{display:block;text-align:center;margin-top:20px;font-size:12px;color:var(--text3);text-decoration:none;transition:color 0.15s;}
+    .back-link:hover{color:var(--text2);}
+    .forgot{font-size:11px;color:var(--text3);text-align:right;cursor:pointer;margin-top:4px;display:block;transition:color 0.15s;}
+    .forgot:hover{color:var(--gold);}
+    .heading{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;text-align:center;}
+    .subheading{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px;font-weight:300;}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .strength{height:3px;background:var(--bg3);border-radius:2px;margin-top:6px;overflow:hidden;}
+    .strength-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.3s;}
+  </style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="box">
+  <div class="logo-row">
+    <div class="logo-box">F</div>
+    <span class="logo-name">FORGE</span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('login')">Sign In</div>
+    <div class="tab" onclick="switchTab('signup')">Create Account</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="form-section active" id="loginForm">
+    <div class="heading">Welcome back.</div>
+    <div class="subheading">Your progress is waiting.</div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+      <span class="forgot" onclick="showForgot()">Forgot password?</span>
+    </div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">Sign In →</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+
+  <!-- SIGNUP -->
+  <div class="form-section" id="signupForm">
+    <div class="heading">Build your system.</div>
+    <div class="subheading">Free forever. No spam. Just growth.</div>
+    <div class="field">
+      <label>Your name (shown on your profile)</label>
+      <input type="text" id="signupName" placeholder="e.g. Aryan, AK, Tehran" maxlength="30">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="min 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)">
+      <div class="strength"><div class="strength-fill" id="strengthBar" style="width:0%"></div></div>
+    </div>
+    <button class="btn" id="signupBtn" onclick="doSignup()">Create Account →</button>
+    <div class="msg" id="signupMsg"></div>
+  </div>
+
+  <!-- FORGOT -->
+  <div class="form-section" id="forgotForm">
+    <div class="heading">Reset password.</div>
+    <div class="subheading">We'll send a link to your email.</div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="forgotEmail" placeholder="your@email.com">
+    </div>
+    <button class="btn" id="forgotBtn" onclick="doForgot()">Send Reset Link →</button>
+    <div class="msg" id="forgotMsg"></div>
+    <span class="back-link" style="cursor:pointer;" onclick="switchTab('login')">← Back to sign in</span>
+  </div>
+
+  <a href="welcome.html" class="back-link">← Back to welcome</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ── CONFIG — replace with your Supabase keys ──
+  var SUPABASE_URL = 'https://ofalzlcnvovpdunoziob.supabase.co';
+  var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mYWx6bGNudm92cGR1bm96aW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1NDI5NTIsImV4cCI6MjA5NTExODk1Mn0.jRSTxxi_kIVKUKtNUSb-dYRGRRrFOvIafUky1dv1AQE';
+  var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // If already logged in, go straight to dashboard
+  sb.auth.getSession().then(function(r){
+    if(r.data.session) window.location.href = 'dashboard.html';
+  });
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(function(t,i){
+      t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup'));
+    });
+    document.getElementById('loginForm').classList.toggle('active', tab==='login');
+    document.getElementById('signupForm').classList.toggle('active', tab==='signup');
+    document.getElementById('forgotForm').classList.toggle('active', tab==='forgot');
+  }
+
+  function showForgot() {
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.getElementById('loginForm').classList.remove('active');
+    document.getElementById('signupForm').classList.remove('active');
+    document.getElementById('forgotForm').classList.add('active');
+  }
+
+  function setLoading(btnId, loading, text) {
+    var btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading ? '<span class="spinner"></span>Please wait...' : text;
+  }
+
+  function showMsg(id, text, type) {
+    var el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg ' + type;
+  }
+
+  function checkStrength(val) {
+    var bar = document.getElementById('strengthBar');
+    var score = 0;
+    if(val.length >= 8)  score++;
+    if(val.length >= 12) score++;
+    if(/[A-Z]/.test(val)) score++;
+    if(/[0-9]/.test(val)) score++;
+    if(/[^A-Za-z0-9]/.test(val)) score++;
+    var colors = ['#e84040','#ff7040','#c9a84c','#3de08a','#3de08a'];
+    bar.style.width = (score*20)+'%';
+    bar.style.background = colors[score-1] || '#e84040';
+  }
+
+  async function doLogin() {
+    var email = document.getElementById('loginEmail').value.trim();
+    var pass  = document.getElementById('loginPassword').value;
+    if(!email || !pass) { showMsg('loginMsg','Please fill in all fields.','error'); return; }
+    setLoading('loginBtn', true, 'Sign In →');
+    var {data, error} = await sb.auth.signInWithPassword({email, password: pass});
+    setLoading('loginBtn', false, 'Sign In →');
+    if(error) { showMsg('loginMsg', error.message, 'error'); return; }
+    showMsg('loginMsg','Welcome back! Loading your dashboard...','success');
+    setTimeout(function(){ window.location.href = 'dashboard.html'; }, 800);
+  }
+
+  async function doSignup() {
+    var name  = document.getElementById('signupName').value.trim();
+    var email = document.getElementById('signupEmail').value.trim();
+    var pass  = document.getElementById('signupPassword').value;
+    if(!name)            { showMsg('signupMsg','Enter your name.','error'); return; }
+    if(!email)           { showMsg('signupMsg','Enter your email.','error'); return; }
+    if(pass.length < 8)  { showMsg('signupMsg','Password must be at least 8 characters.','error'); return; }
+    setLoading('signupBtn', true, 'Create Account →');
+    var {data, error} = await sb.auth.signUp({
+      email, password: pass,
+      options: { data: { display_name: name, username: name.toLowerCase().replace(/\s+/g,'_') + '_' + Math.floor(Math.random()*1000) } }
+    });
+    setLoading('signupBtn', false, 'Create Account →');
+    if(error) { showMsg('signupMsg', error.message, 'error'); return; }
+    if(data.user && data.user.identities && data.user.identities.length === 0) {
+      showMsg('signupMsg','An account with this email already exists. Please sign in.','error'); return;
+    }
+    showMsg('signupMsg','Account created! Check your email to verify, then sign in.','success');
+  }
+
+  async function doForgot() {
+    var email = document.getElementById('forgotEmail').value.trim();
+    if(!email) { showMsg('forgotMsg','Enter your email address.','error'); return; }
+    setLoading('forgotBtn', true, 'Send Reset Link →');
+    var {error} = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/forge/auth.html'
+    });
+    setLoading('forgotBtn', false, 'Send Reset Link →');
+    if(error) { showMsg('forgotMsg', error.message, 'error'); return; }
+    showMsg('forgotMsg','Reset link sent! Check your email.','success');
+  }
+
+  // Enter key submits
+  document.addEventListener('keydown', function(e) {
+    if(e.key !== 'Enter') return;
+    if(document.getElementById('loginForm').classList.contains('active'))  doLogin();
+    if(document.getElementById('signupForm').classList.contains('active')) doSignup();
+    if(document.getElementById('forgotForm').classList.contains('active')) doForgot();
+  });
+</script>
+</body>
+</html>
